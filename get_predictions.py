@@ -12,16 +12,12 @@ import json
 import requests
 
 import pandas as pd
-import yaml
+import streamlit as st
 
-with open("./dr_config.yaml", "r") as f:
-    creds = yaml.load(f, Loader=yaml.FullLoader)
-DEPLOYMENT_ID = creds["deployment_id"]
+DEPLOYMENT_ID = st.secrets["DEPLOYMENT_ID"]
 API_URL = f"https://cfds-ccm-prod.orm.datarobot.com/predApi/v1.0/deployments/{DEPLOYMENT_ID}/predictions"  # noqa
-API_KEY = creds["api_key"]
-DATAROBOT_KEY = creds["datarobot_key"]
-
-DEPLOYMENT_ID = "619e988a08405543d4d35ea2"
+API_KEY = st.secrets["API_KEY"]
+DATAROBOT_KEY = st.secrets["DATAROBOT_KEY"]
 
 # Don't change this. It is enforced server-side too.
 MAX_PREDICTION_FILE_SIZE_BYTES = 52428800  # 50 MB

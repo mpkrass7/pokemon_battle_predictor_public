@@ -59,7 +59,7 @@ if press_battle_button > 0:
     winner = pokemon1 if battle_results > 0.5 else pokemon2
     try:
         battle_image.image(
-            f"images/{winner}.png", width=250,
+            f"images/{winner.lower()}.png", width=250,
         )
     except Exception as e:
         logger.warning(e)
@@ -146,7 +146,7 @@ if pressed_scenario > 0:
     )
     try:
         battle_image.image(
-            f"images/{winner}.png", width=150,
+            f"images/{winner.lower()}.png", width=150,
         )
     except Exception as e:
         logger.warning(e)
