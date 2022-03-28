@@ -80,6 +80,7 @@ def make_datarobot_deployment_predictions(data, deployment_id):
 
     params = {
         # If explanations are required, uncomment the line below
+        # "minExplanations": 3,
         "maxExplanations": 3,
         "thresholdHigh": 0.5,
         "thresholdLow": 0.15,
@@ -140,7 +141,16 @@ def dataframify_predictions(preds):
         rowId.append(row.get("rowId"))
         predictionValue.append(row.get("predictionValues")[0].get("value"))
         explanations = row.get("predictionExplanations")
-        exp0, exp1, exp2 = explanations[0], explanations[1], explanations[2]
+        if not explanations:
+            exp0, exp1, exp2 = {"feature":""}, {"feature":""}, {"feature":""}
+        elif len(explanations) >= 3:
+            exp0, exp1, exp2 = explanations[0], explanations[1], explanations[2]
+        elif len(explanations) == 2:
+            exp0, exp1, exp2 = explanations[0], explanations[1], {"feature":""}
+        elif len(explanations) == 1:
+            exp0, exp1, exp2 = explanations[0], {"feature":""}, {"feature":""}
+        else:
+            exp0, exp1, exp2 = {"feature":""}, {"feature":""}, {"feature":""}
 
         explanation_0_feature.append(exp0.get("feature"))
         explanation_0_feature_value.append(str(exp0.get("featureValue")))
