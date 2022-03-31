@@ -78,8 +78,8 @@ def make_datarobot_deployment_predictions(data, deployment_id):
         # If explanations are required, uncomment the line below
         # "minExplanations": 3,
         "maxExplanations": 3,
-        "thresholdHigh": 0.5,
-        "thresholdLow": 0.15,
+        # "thresholdHigh": 0.5,
+        # "thresholdLow": 0.15,
         # Uncomment this for Prediction Warnings, if enabled for your deployment.
         # 'predictionWarningEnabled': 'true',
     }
