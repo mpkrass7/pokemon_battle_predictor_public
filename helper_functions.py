@@ -224,6 +224,8 @@ def process_for_custom_battle(pokemon_df, pokemon2, custom_pokemon_dict):
 
     combine_dict = {**pokemon2_df_dict, **custom_pokemon_dict}
     battle_data = pd.DataFrame(combine_dict)
+    battle_data["First_pokemon"] = "foo"
+    battle_data["Second_pokemon"] = "bar"
 
     battle_data["type_advantage"] = build_type_advantage(battle_data)
 
@@ -232,4 +234,4 @@ def process_for_custom_battle(pokemon_df, pokemon2, custom_pokemon_dict):
             battle_data[f"pokemon_1_{stat}"] - battle_data[f"pokemon_2_{stat}"]
         )
 
-    return battle_data.to_csv()
+    return battle_data
