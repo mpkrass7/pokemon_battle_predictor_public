@@ -5,7 +5,6 @@ import streamlit as st
 from logzero import logger
 
 import get_predictions as gp
-from get_predictions import DEPLOYMENT_ID
 from build_datasets.format_dataset_for_classification import (
     process_data,
     CONTINUOUS_COLUMNS,
@@ -45,7 +44,10 @@ TYPE_ADVANTAGES = {
     "water": ["fire", "ground", "rock"],
     "electric": ["water", "flying"],
     "ice": ["grass", "ground", "flying", "dragon"],
-    "psychic": ["poison", "fighting",],
+    "psychic": [
+        "poison",
+        "fighting",
+    ],
     "fighting": ["normal", "ice", "rock", "dark", "steel"],
     "normal": [],
     "poison": ["grass", "fairy"],
@@ -62,9 +64,8 @@ TYPE_ADVANTAGES = {
 }
 
 
-@st.cache
+@st.cache_data
 def load_data():
-    # scored_data = pd.read_csv("data/pokemon_combat_classifier - train.csv")
     pokemon_data = pd.read_csv("data/pokemon.csv")
     pokemon_data.columns = POKEMON_BASE_COLUMNS
 
@@ -106,7 +107,13 @@ def build_comp_chart(pokemon_data, pokemon1, pokemon2):
         .rename(columns={"name": "Pokemon"})
     )
 
-    fig = px.bar(melt_comp, x="stat", y="value", color="Pokemon", barmode="group",)
+    fig = px.bar(
+        melt_comp,
+        x="stat",
+        y="value",
+        color="Pokemon",
+        barmode="group",
+    )
 
     fig.update_layout(
         yaxis_title=None,
@@ -114,7 +121,9 @@ def build_comp_chart(pokemon_data, pokemon1, pokemon2):
         autosize=False,
         height=500,
         width=1200,
-        font=dict(size=22,),
+        font=dict(
+            size=22,
+        ),
     )
     return fig
 
@@ -164,7 +173,9 @@ def build_type_advantage(df):
     return t_adv
 
 
-def process_for_pokemon_battle(pokemon_df, pokemon1, pokemon2):
+def process_for_pokemon_battle(
+    pokemon_df: pd.DataFrame, pokemon1: str, pokemon2: str
+) -> pd.DataFrame:
     pokemon1_id = pokemon_df.loc[pokemon_df.name == pokemon1].id.values[0]
     pokemon2_id = pokemon_df.loc[pokemon_df.name == pokemon2].id.values[0]
     combat = pd.DataFrame(
@@ -172,14 +183,13 @@ def process_for_pokemon_battle(pokemon_df, pokemon1, pokemon2):
     )
     battle_data = process_data(combat, pokemon_df, is_training_data=False)
     battle_data["type_advantage"] = build_type_advantage(battle_data)
-    outpath = "data/temp_battle_data.csv"
-    battle_data.to_csv(outpath, index=False)
-    return outpath
+    print(battle_data.head())
+    return battle_data
 
 
 def run_pokemon_battle(battle_ready_df):
-    preds = gp.main(battle_ready_df, DEPLOYMENT_ID)
-    probability_pokemon1_wins = preds.predictionValue[0]
+    preds = gp.main(battle_ready_df)
+    probability_pokemon1_wins = preds["target_True_PREDICTION"][0]
     return probability_pokemon1_wins, preds
 
 
@@ -198,7 +208,8 @@ def process_for_custom_battle(pokemon_df, pokemon2, custom_pokemon_dict):
 
     pokemon2_df.columns = [f"pokemon_2_{i}" for i in pokemon2_df.columns]
 
-    pokemon2_df_dict = pokemon2_df.to_dict("row")[0]
+    pokemon2_df_dict = pokemon2_df.to_dict(orient="records")[0]
+
     pokemon2_df_dict["pokemon_2_Multi_Type"] = (
         1
         if (
@@ -221,6 +232,4 @@ def process_for_custom_battle(pokemon_df, pokemon2, custom_pokemon_dict):
             battle_data[f"pokemon_1_{stat}"] - battle_data[f"pokemon_2_{stat}"]
         )
 
-    outpath = "data/temp_battle_data.csv"
-    battle_data.to_csv(outpath, index=False)
-    return outpath
+    return battle_data.to_csv()

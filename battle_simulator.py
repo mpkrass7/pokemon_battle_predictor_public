@@ -1,5 +1,3 @@
-import numpy as np
-import pandas as pd
 import streamlit as st
 from logzero import logger
 import helper_functions as hf
@@ -9,7 +7,8 @@ import helper_functions as hf
 st.set_page_config(page_title="Pokemon Battle Simulator", layout="wide", page_icon="⚔️")
 
 st.markdown(
-    hf.SMALL_FONT_STYLE, unsafe_allow_html=True,
+    hf.SMALL_FONT_STYLE,
+    unsafe_allow_html=True,
 )
 
 pokemon = hf.load_data()
@@ -54,21 +53,24 @@ battle_loc, battle_image, _, battle_explanation = st.columns([5, 2, 1, 4])
 if press_battle_button > 0:
 
     prep_for_battle = hf.process_for_pokemon_battle(pokemon, pokemon1, pokemon2)
-    battle_results, preds = hf.run_pokemon_battle(prep_for_battle,)
+    battle_results, preds = hf.run_pokemon_battle(
+        prep_for_battle,
+    )
 
     winner = pokemon1 if battle_results > 0.5 else pokemon2
     try:
         battle_image.image(
-            f"images/{winner}.png", width=250,
+            f"images/{winner.lower()}.png",
+            width=250,
         )
     except Exception as e:
         logger.warning(e)
     battle_loc.subheader(
         f"And the winner between {pokemon1} and {pokemon2} is: {winner}!"
     )
-    explanation_1 = f"{preds['explanation_0_feature'][0].replace('_', ' ').upper()} {preds['explanation_0_qualitative_strength'][0]}"
-    explanation_2 = f"{preds['explanation_1_feature'][0].replace('_', ' ').upper()} {preds['explanation_1_qualitative_strength'][0]}"
-    explanation_3 = f"{preds['explanation_2_feature'][0].replace('_', ' ').upper()} {preds['explanation_2_qualitative_strength'][0]}"
+    explanation_1 = f"{preds['EXPLANATION_1_FEATURE_NAME'][0].replace('_', ' ').upper()} {preds['EXPLANATION_1_QUALITATIVE_STRENGTH'][0]}"
+    explanation_2 = f"{preds['EXPLANATION_2_FEATURE_NAME'][0].replace('_', ' ').upper()} {preds['EXPLANATION_2_QUALITATIVE_STRENGTH'][0]}"
+    explanation_3 = f"{preds['EXPLANATION_3_FEATURE_NAME'][0].replace('_', ' ').upper()} {preds['EXPLANATION_3_QUALITATIVE_STRENGTH'][0]}"
     battle_explanation.markdown(
         f"""
             <h3>Primary Drivers:</h3> \n
@@ -146,14 +148,15 @@ if pressed_scenario > 0:
     )
     try:
         battle_image.image(
-            f"images/{winner}.png", width=150,
+            f"images/{winner}.png",
+            width=150,
         )
     except Exception as e:
         logger.warning(e)
 
-    explanation_1 = f"{preds['explanation_0_feature'][0].replace('_', ' ').upper()} {preds['explanation_0_qualitative_strength'][0]}"
-    explanation_2 = f"{preds['explanation_1_feature'][0].replace('_', ' ').upper()} {preds['explanation_1_qualitative_strength'][0]}"
-    explanation_3 = f"{preds['explanation_2_feature'][0].replace('_', ' ').upper()} {preds['explanation_2_qualitative_strength'][0]}"
+    explanation_1 = f"{preds['EXPLANATION_1_FEATURE_NAME'][0].replace('_', ' ').upper()} {preds['EXPLANATION_1_QUALITATIVE_STRENGTH'][0]}"
+    explanation_2 = f"{preds['EXPLANATION_2_FEATURE_NAME'][0].replace('_', ' ').upper()} {preds['EXPLANATION_2_QUALITATIVE_STRENGTH'][0]}"
+    explanation_3 = f"{preds['EXPLANATION_3_FEATURE_NAME'][0].replace('_', ' ').upper()} {preds['EXPLANATION_3_QUALITATIVE_STRENGTH'][0]}"
     battle_explanation.markdown(
         f"""
             <h3>Primary Drivers:</h3> \n
